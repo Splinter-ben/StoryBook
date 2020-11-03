@@ -1,17 +1,17 @@
-const router = require('express').Router();
+const viewRouter = require('express').Router();
 
 // @desc    Login/Landing Page
 // @route   GET /
 // @access  Public
-router.get('/', (req, res) => {
+viewRouter.get('/', (req, res) => {
   res.render('login', { layout: 'login' });
 });
 
 // @desc    Dasboard/Dasboard Page
 // @route   GET /dashboard
 // @access  Public
-router.get('/dashboard', (req, res) => {
+viewRouter.get('/dashboard', (req, res) => {
   res.render('dashboard');
 });
 
-module.exports = router;
+module.exports = viewRouter;
