@@ -4,7 +4,7 @@ const router = require('express').Router();
 // @route   GET /
 // @access  Public
 router.get('/', (req, res) => {
-  res.render('login');
+  res.render('login', { layout: 'login' });
 });
 
 // @desc    Dasboard/Dasboard Page
