@@ -4,9 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node ./src/app.js",
-    "dev": "nodemon -r dotenv/config ./src/app.js",
-    "pm2": "pm2 start --node-args='-r dotenv/config' ./src/app.js --name app.js"
+    "dev": "nodemon -r dotenv/config ./app.js",
+    "pm2": "pm2 start --node-args='-r dotenv/config' ./app.js --name app.js"
   },
   "keywords": [
     "Express",
@@ -31,7 +30,6 @@
     "pm2": "^4.5.0"
   },
   "devDependencies": {
-    "cross-env": "^7.0.2",
     "nodemon": "^2.0.6"
   }
 }
