@@ -16,8 +16,16 @@ authRouter.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/api/v1/dashboard');
+    res.redirect('/dashboard');
   }
 );
+
+// @desc    LOGOUT user
+// @route   GET /auth/logout
+// @access  Private
+authRouter.get('/auth/logout', (req, res) => {
+  req.logOut();
+  res.redirect('/');
+});
 
 module.exports = authRouter;

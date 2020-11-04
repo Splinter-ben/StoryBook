@@ -6,9 +6,11 @@ const express = require('express'),
   exphbs = require('express-handlebars'),
   morgan = require('morgan'),
   passport = require('passport'),
-  session = require('express-session'),
   viewRouter = require('./routes/index'),
   authRouter = require('./routes/auth'),
+  mongoose = require('mongoose'),
+  session = require('express-session'),
+  MongoStore = require('connect-mongo')(session),
   connectDB = require('./database/atlas'),
   PORT = process.env.PORT,
   app = express();
@@ -34,6 +36,7 @@ app.use(
     secret: 'Whatever..',
     resave: false,
     saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
   })
 );
 
@@ -45,7 +48,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use('/api/v1', viewRouter, authRouter);
+app.use('/', viewRouter, authRouter);
 
 // Database
 connectDB();
