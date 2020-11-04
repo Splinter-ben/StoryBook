@@ -1,4 +1,3 @@
-const { create } = require('express-handlebars');
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
