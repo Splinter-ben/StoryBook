@@ -28,13 +28,10 @@ app.set('view engine', '.hbs');
 // Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-app.use('/api/v1', viewRouter, authRouter);
-
-// Sessions (must always be above passport middleware)
+// Sessions (must always be above passport middleware and routes)
 app.use(
   session({
-    secret: 'whatever',
+    secret: 'Whatever..',
     resave: false,
     saveUninitialized: false,
   })
@@ -46,6 +43,9 @@ require('./config/passport')(passport);
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Routes
+app.use('/api/v1', viewRouter, authRouter);
 
 // Database
 connectDB();
