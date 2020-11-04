@@ -8,6 +8,7 @@ const express = require('express'),
   passport = require('passport'),
   viewRouter = require('./routes/index'),
   authRouter = require('./routes/auth'),
+  storyRouter = require('./routes/stories'),
   mongoose = require('mongoose'),
   session = require('express-session'),
   MongoStore = require('connect-mongo')(session),
@@ -16,6 +17,9 @@ const express = require('express'),
   app = express();
 
 // Body Parser
+// parse application/x-www-form-urlencoded, basically can only parse incoming Request Object if strings or arrays
+app.use(express.urlencoded({ extended: false }));
+// parse application/json, basically parse incoming Request Object as a JSON Object
 app.use(json());
 
 // Morgan Logger
@@ -23,8 +27,14 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// Handlebars Helpers
+const { formatDate } = require('./helpers/hbs');
+
 // Handlebars
-app.engine('.hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
+app.engine(
+  '.hbs',
+  exphbs({ helpers: { formatDate }, defaultLayout: 'main', extname: '.hbs' })
+);
 app.set('view engine', '.hbs');
 
 // Static folder
@@ -48,7 +58,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use('/', viewRouter, authRouter);
+app.use('/', viewRouter, authRouter, storyRouter);
 
 // Database
 connectDB();
