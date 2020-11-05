@@ -6,6 +6,7 @@ const express = require('express'),
   exphbs = require('express-handlebars'),
   morgan = require('morgan'),
   passport = require('passport'),
+  methodOverride = require('method-override'),
   viewRouter = require('./routes/index'),
   authRouter = require('./routes/auth'),
   storyRouter = require('./routes/stories'),
@@ -21,6 +22,16 @@ const express = require('express'),
 app.use(express.urlencoded({ extended: false }));
 // parse application/json, basically parse incoming Request Object as a JSON Object
 app.use(json());
+
+// Method override
+app.use(methodOverride(function (req, res) {
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    // look in urlencoded POST bodies and delete it
+    let method = req.body._method
+    delete req.body._method
+    return method
+  }
+}))
 
 // Morgan Logger
 if (process.env.NODE_ENV === 'development') {

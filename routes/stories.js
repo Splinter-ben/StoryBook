@@ -30,13 +30,55 @@ storyRouter.get('/stories', ensureAuth, async (req, res) => {
   try {
     const stories = await Story.find({ status: 'public' })
       .populate('user')
-      .sort({ createdAt: 'desc' })
+      .sort({ createdAt: 'asc' })
       .lean();
 
     res.render('stories', { stories });
   } catch (error) {
     console.log(error);
     res.render('error/500');
+  }
+});
+
+// @desc    SHOW edit page
+// @route   GET /stories/edit/:id
+// @access  Public
+storyRouter.get('/stories/edit/:id', ensureAuth, async (req, res) => {
+  const story = await Story.findOne({
+    _id: req.params.id,
+  }).lean();
+
+  if (!story) {
+    return res.render('error/404');
+  }
+  // check if this is the owner of the story
+  if (story.user != req.user.id) {
+    res.redirect('/stories');
+  } else {
+    res.render('stories/edit', { story });
+  }
+});
+
+// @desc    UPDATE story
+// @route   PUT /stories/:id
+// @access  Private
+storyRouter.put('/stories/:id', ensureAuth, async (req, res) => {
+  let story = await Story.findById(req.params.id).lean();
+
+  if (!story) {
+    return res.render('error/404');
+  }
+
+  // check if this is the owner of the story
+  if (story.user != req.user.id) {
+    res.redirect('/stories');
+  } else {
+    story = await Story.findByIdAndUpdate({ _id: req.params.id }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.redirect('/dashboard');
   }
 });
 
