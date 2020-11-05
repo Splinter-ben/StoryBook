@@ -28,12 +28,22 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Handlebars Helpers
-const { formatDate } = require('./helpers/hbs');
+const {
+  formatDate,
+  truncate,
+  stripTags,
+  editIcon,
+  select,
+} = require('./helpers/hbs');
 
 // Handlebars
 app.engine(
   '.hbs',
-  exphbs({ helpers: { formatDate }, defaultLayout: 'main', extname: '.hbs' })
+  exphbs({
+    helpers: { formatDate, truncate, stripTags, editIcon, select },
+    defaultLayout: 'main',
+    extname: '.hbs',
+  })
 );
 app.set('view engine', '.hbs');
 
@@ -56,6 +66,12 @@ require('./config/passport')(passport);
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Set global var
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  next();
+});
 
 // Routes
 app.use('/', viewRouter, authRouter, storyRouter);
