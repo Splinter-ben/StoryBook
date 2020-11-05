@@ -17,7 +17,23 @@ storyRouter.post('/stories/add', ensureAuth, async (req, res) => {
     req.body.user = req.user.id;
     await Story.create(req.body);
     res.redirect('/dashboard');
+  } catch (error) {
+    console.log(error);
+    res.render('error/500');
+  }
+});
 
+// @desc    GET all stories
+// @route   GET /stories/add
+// @access  Public
+storyRouter.get('/stories', ensureAuth, async (req, res) => {
+  try {
+    const stories = await Story.find({ status: 'public' })
+      .populate('user')
+      .sort({ createdAt: 'desc' })
+      .lean();
+
+    res.render('stories', { stories });
   } catch (error) {
     console.log(error);
     res.render('error/500');
