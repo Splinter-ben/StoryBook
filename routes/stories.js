@@ -2,6 +2,42 @@ const storyRouter = require('express').Router();
 const { ensureAuth } = require('../middleware/authentication');
 const Story = require('../models/Story');
 
+// @desc    GET all stories
+// @route   GET /stories
+// @access  Public
+storyRouter.get('/stories', ensureAuth, async (req, res) => {
+  try {
+    const stories = await Story.find({ status: 'public' })
+      .populate('user')
+      .sort({ createdAt: 'asc' })
+      .lean();
+
+    res.render('stories', { stories });
+  } catch (error) {
+    console.log(error);
+    res.render('error/500');
+  }
+});
+
+// @desc    SHOW a single story
+// @route   GET /stories/:id
+// @access  Public
+storyRouter.get('/stories/:id', ensureAuth, async (req, res) => {
+  try {
+    let story = await Story.findById(req.params.id).populate('user').lean();
+
+    if (!story) {
+      return res.render('error/404');
+    }
+    res.render('stories/show', {
+      story
+    });
+  } catch (error) {
+    console.log(error);
+    res.render('error/404');
+  }
+});
+
 // @desc    SHOW add page
 // @route   GET /stories/add
 // @access  Public
@@ -17,23 +53,6 @@ storyRouter.post('/stories/add', ensureAuth, async (req, res) => {
     req.body.user = req.user.id;
     await Story.create(req.body);
     res.redirect('/dashboard');
-  } catch (error) {
-    console.log(error);
-    res.render('error/500');
-  }
-});
-
-// @desc    GET all stories
-// @route   GET /stories/add
-// @access  Public
-storyRouter.get('/stories', ensureAuth, async (req, res) => {
-  try {
-    const stories = await Story.find({ status: 'public' })
-      .populate('user')
-      .sort({ createdAt: 'asc' })
-      .lean();
-
-    res.render('stories', { stories });
   } catch (error) {
     console.log(error);
     res.render('error/500');
