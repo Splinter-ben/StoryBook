@@ -30,11 +30,32 @@ storyRouter.get('/stories/:id', ensureAuth, async (req, res) => {
       return res.render('error/404');
     }
     res.render('stories/show', {
-      story
+      story,
     });
   } catch (error) {
     console.log(error);
     res.render('error/404');
+  }
+});
+
+// @desc    User public stories
+// @route   GET /stories/user/:userId
+// @access  Public
+storyRouter.get('/stories/user/:userId', ensureAuth, async (req, res) => {
+  try {
+    const stories = await Story.find({
+      user: req.params.userId,
+      status: 'public',
+    })
+      .populate('user')
+      .lean()
+
+    res.render('stories/index', {
+      stories,
+    })
+  } catch (err) {
+    console.error(err)
+    res.render('error/500')
   }
 });
 
